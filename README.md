@@ -24,7 +24,16 @@ requirements.txt   dependencies for pip
 
 ## How to Run
 
-Python 3.11 or newer is required. The first run downloads about 2.7 GB of data, so it needs disk space and an internet connection.
+Python 3.11 or newer is required. The first run downloads about 2.7 GB of data, so it needs an internet connection.
+
+| Requirement | Minimum |
+|---|---|
+| Memory | 32GB (where this notebook tested) |
+| Free disk space | about 5 GB (3.2 GB for the raw download and the cached Parquet file, plus room for the models) |
+| GPU | not needed, everything runs on the CPU |
+| Time | long on the first run: the two TF-IDF fits on all training reviews took about 7 minutes on a 12 core machine |
+
+The notebook prints a warning at the top if the machine has less than 16 GB of memory.
 
 ### Option 1: uv
 

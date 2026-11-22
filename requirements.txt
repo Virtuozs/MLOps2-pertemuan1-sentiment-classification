@@ -36,12 +36,16 @@ idna==3.20
     # via
     #   anyio
     #   httpx2
+jinja2==3.1.6
+    # via project
 joblib==1.6.0
     # via
     #   project
     #   scikit-learn
 kiwisolver==1.5.1
     # via matplotlib
+markupsafe==3.0.4
+    # via jinja2
 matplotlib==3.11.2
     # via project
 narwhals==2.29.0
@@ -68,6 +72,8 @@ pandas==3.1.1
     # via project
 pillow==13.0.0
     # via matplotlib
+psutil==7.2.2
+    # via project
 pyarrow==26.0.1
     # via project
 pyparsing==3.3.3
