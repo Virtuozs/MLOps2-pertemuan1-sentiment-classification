@@ -34,5 +34,20 @@
     "scikit-learn": "1.9.1",
     "numpy": "2.4.6",
     "pandas": "3.1.1"
+  },
+  "threshold": 0.0,
+  "test": {
+    "reviews": 417171,
+    "from": "2018-12-31",
+    "to": "2019-12-31",
+    "macro_f1": 0.9492,
+    "macro_f1_95_interval": [
+      0.9483,
+      0.95
+    ],
+    "negative_recall": 0.9338,
+    "negative_precision": 0.8998,
+    "accuracy": 0.9701,
+    "baseline_macro_f1": 0.9397
   }
 }
