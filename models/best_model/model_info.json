@@ -1,0 +1,38 @@
+{
+  "name": "SGD modified huber, class weight negative x2, alpha=3e-06",
+  "settings": {
+    "model": "SGDClassifier",
+    "loss": "modified_huber",
+    "alpha": 3e-06,
+    "class_weight": {
+      "0": 2,
+      "1": 1
+    },
+    "max_iter": 50,
+    "tol": 0.0001,
+    "random_state": 42
+  },
+  "labels": {
+    "0": "negative",
+    "1": "positive"
+  },
+  "input": "title and text joined, default star titles masked (join_title)",
+  "features": 1498693,
+  "trained_on": {
+    "reviews": 1946795,
+    "until": "1508462638146"
+  },
+  "validation": {
+    "macro_f1": 0.9501,
+    "negative_recall": 0.9299,
+    "negative_precision": 0.9116,
+    "baseline_macro_f1": 0.9393,
+    "tie_threshold": 0.0009
+  },
+  "versions": {
+    "python": "3.11.15",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.4.6",
+    "pandas": "3.1.1"
+  }
+}
