@@ -5,76 +5,69 @@
 This project classifies Amazon product reviews as negative or positive, so that complaints can be found without reading every review.
 
 - **Data:** Amazon Reviews 2023, category Video Games, reviews written up to 31 December 2019.
-- **Input:** review title and review text.
-- **Label:** rating 1 and 2 are negative, rating 4 and 5 are positive, rating 3 is dropped.
-- **Metric:** macro-F1, the mean of the F1 score of the negative class and the F1 score of the positive class.
-- **Split:** by time into train, validation and test sets. The test set is used only once, at the end.
+- **Input:** review title and review text. **Label:** rating 1 and 2 are negative, 4 and 5 are positive, 3 is dropped.
+- **Metric:** macro-F1, the mean of the F1 score of the negative class and of the positive class.
+- **Split:** by time. The oldest 70% of the reviews train, the next 15% validate, the newest 15% test. The test set is scored once.
 
-The whole work is in one notebook, `notebook.ipynb`. It downloads the data, audits and cleans it, explores it, compares a baseline with several models, saves the final model in `models/`, and reloads it to check it.
+The whole work is in one notebook, `notebook.ipynb`: it downloads and cleans the data, explores it, compares a baseline with classical and transformer models, scores the final model on the test set, interprets it, and saves and reloads it.
+
+## Result
+
+| | Validation macro-F1 | Test macro-F1 |
+|---|---|---|
+| Baseline: TF-IDF and logistic regression | 0.9393 | 0.9397 |
+| **Final: TF-IDF and SGD classifier, negative class weight x2** | **0.9501** | **0.9492** |
+
+The final model finds 93.4% of the negative reviews on the test set, and 90.0% of the reviews it calls negative are negative. A frozen transformer encoder (MiniLM embeddings) scored 0.8898 on validation and was not competitive. The notebook explains why, and lists the limits and next steps.
 
 ## Project Structure
 
 ```
-notebook.ipynb     main notebook, run from top to bottom
-data/              downloaded and prepared data (created by the notebook)
-models/            saved model (created by the notebook)
-pyproject.toml     dependencies for uv
-requirements.txt   dependencies for pip
+notebook.ipynb         main notebook, run from top to bottom
+data/                  downloaded and prepared data, and cached embeddings (created by the notebook)
+models/best_model/     final model: model.joblib, model.pkl and model_info.json
+models/                the best classical model of the search (created by the notebook)
+pyproject.toml         dependencies for uv
+requirements.txt       dependencies for pip
 ```
 
 ## How to Run
 
-Python 3.11 or newer is required. The first run downloads about 2.7 GB of data, so it needs an internet connection.
+Python 3.11 or newer is required, and an internet connection for the first run.
 
-| Requirement | Minimum |
+| Requirement | Needed |
 |---|---|
-| Memory | 32GB (where this notebook tested) |
-| Free disk space | about 5 GB (3.2 GB for the raw download and the cached Parquet file, plus room for the models) |
+| Memory | 16 GB or more (about 15 GB are in use at the heaviest step, developed with 32 GB). The notebook warns below 16 GB. |
+| Free disk space | about 11 GB: data and cached embeddings 4.3 GB, packages 6 GB, models 0.1 GB |
+| Downloads | the data (about 2.7 GB), the encoder (about 90 MB) and the Python packages. On Linux the `torch` wheel is the CUDA build, which is large and runs on the CPU. |
 | GPU | not needed, everything runs on the CPU |
-| Time | long on the first run: the two TF-IDF fits on all training reviews took about 7 minutes on a 12 core machine |
+| Time | several hours on the first run, about 2 of them for the transformer embeddings. The data and the embeddings are cached, so a rerun is much faster. |
 
-The notebook prints a warning at the top if the machine has less than 16 GB of memory.
-
-### Option 1: uv
-
-Install uv first if it is not available (see the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/)):
+**With uv** (installs the locked dependencies, and the required Python if it is missing):
 
 ```bash
-# Linux and macOS
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-# or with pip
-pip install uv
-```
-
-Check the installation with `uv --version`, then set up the project. `uv sync` creates `.venv` and installs the locked dependencies, and uv downloads the required Python version if it is missing.
-
-```bash
+pip install uv        # or see https://docs.astral.sh/uv/getting-started/installation/
 uv sync
 uv run jupyter lab
 ```
 
-Open `notebook.ipynb` and run all cells. To run it without opening Jupyter:
-
-```bash
-uv run jupyter nbconvert --to notebook --execute --inplace notebook.ipynb
-```
-
-### Option 2: Python and requirements.txt
+**With pip:**
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pip install jupyterlab ipykernel
+pip install -r requirements.txt jupyterlab ipykernel
 jupyter lab
 ```
 
-Open `notebook.ipynb` and run all cells. To run it without opening Jupyter:
+Open `notebook.ipynb` and run all cells. To run it without opening Jupyter, use `jupyter nbconvert --to notebook --execute --inplace notebook.ipynb` (with `uv run` in front for uv).
 
-```bash
-jupyter nbconvert --to notebook --execute --inplace notebook.ipynb
+## Using the Saved Model
+
+```python
+import joblib
+model = joblib.load('models/best_model/model.joblib')   # or pickle.load on model.pkl
+model.predict(['Great game . Love it'])                 # 1 is positive, 0 is negative
 ```
+
+The input is the title and the text joined with `" . "`. A title that is only a star rating, such as "Five Stars", is left empty, as in the notebook (Section 12.3 has a helper). `model_info.json` holds the settings, the scores and the library versions that the file needs.
