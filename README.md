@@ -85,4 +85,8 @@ model = joblib.load('models/best_model/model.joblib')   # or pickle.load on mode
 model.predict(['Great game . Love it'])                 # 1 is positive, 0 is negative
 ```
 
-The input is the title and the text joined with `" . "`. A title that is only a star rating, such as "Five Stars", is left empty (Section 12.3 has a helper). `model_info.json` holds the settings, scores and library versions.
+The input is the title and the text joined with `" . "`. A title that is only a star rating, such as "Five Stars", is left empty (Section 12.3 has a helper). `model_info.json` holds the settings, scores and library versions. `python scripts/verify_joblib.py` checks that the file reloads and predicts.
+
+## Backend Service
+
+A FastAPI service in `api/` serves the saved model with a `POST /predict` endpoint protected by an `x-api-key` header. Setup, endpoints and deployment are in [`api/README.md`](api/README.md).
