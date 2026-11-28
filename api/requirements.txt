@@ -1,0 +1,18 @@
+# Slim runtime dependencies for serving the API (for example on a VPS).
+# The root requirements.txt is for the notebook and pulls in torch, matplotlib, jupyter, etc.
+#
+# Install from the project root:
+#   pip install -r api/requirements.txt
+
+# Web layer
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.4
+pydantic-settings==2.16.3
+
+# Model runtime. These versions must match the ones used to train and save
+# models/best_model/model.joblib, because pickled models are version-sensitive.
+scikit-learn==1.9.1
+numpy==2.4.6
+scipy==1.17.1
+joblib==1.6.0
