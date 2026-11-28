@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "Video Games Review Sentiment API",
+    "description": "Case B: classifies a review as positive or negative. Set the api_key variable to the API_KEY the server was started with.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "api_key", "value": "change-me" }
+  ],
+  "item": [
+    {
+      "name": "Predict positive",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "x-api-key", "value": "{{api_key}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Great game\",\n  \"text\": \"Love this game, hours of fun and the story is excellent.\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"model_name\": \"sentiment-sgd-tfidf\",\n  \"model_version\": \"28a9fe76122e\",\n  \"label\": \"positive\",\n  \"score\": 4.940669147460234,\n  \"threshold\": 0.0,\n  \"status\": \"ok\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Predict negative",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "x-api-key", "value": "{{api_key}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Waste of money and time\",\n  \"text\": \"Its such a bad game, not even playing for one hour and bored already\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"model_name\": \"sentiment-sgd-tfidf\",\n  \"model_version\": \"28a9fe76122e\",\n  \"label\": \"negative\",\n  \"score\": -2.278372200043428,\n  \"threshold\": 0.0,\n  \"status\": \"ok\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Predict without key (401)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"text\": \"Love this game\"\n}" },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] }
+      },
+      "response": [
+        {
+          "name": "401 Unauthorized",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"detail\": \"Invalid or missing API key\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Predict blank text (422)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "x-api-key", "value": "{{api_key}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"text\": \"   \"\n}" },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"] }
+      },
+      "response": []
+    }
+  ]
+}
